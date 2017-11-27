@@ -6,10 +6,13 @@ class DropAnomaly implements VectorProcessor
 {
     private $deviation;
     private $prevValue;
+    /** @var VectorProcessor */
+    private $processor;
 
     public function __construct($deviation = 0.5)
     {
         $this->deviation = $deviation;
+        $this->processor = new MovingAverage(6);
     }
 
     public function value($value)
@@ -20,10 +23,11 @@ class DropAnomaly implements VectorProcessor
             if ($delta > $allowedDelta) {
                 return null;
             } else {
+                $this->prevValue = $this->processor->value($value);
                 return $value;
             }
         } else {
-            $this->prevValue = $value;
+            $this->prevValue = $this->processor->value($value);
             return $value;
         }
     }

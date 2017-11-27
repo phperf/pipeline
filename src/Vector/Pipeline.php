@@ -13,9 +13,17 @@ class Pipeline implements VectorProcessor
         return $this;
     }
 
+    private $lastValue;
+
+    public function getLastValue()
+    {
+        return $this->lastValue;
+    }
+
     public function value($value)
     {
         if ($value === null) {
+            $this->lastValue = null;
             return null;
         }
         foreach ($this->processors as $processor) {
@@ -24,6 +32,7 @@ class Pipeline implements VectorProcessor
                 break;
             }
         }
+        $this->lastValue = $value;
         return $value;
     }
 }
